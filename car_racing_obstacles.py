@@ -127,7 +127,7 @@ class FrictionDetector(contactListener):
             obj.tiles.remove(tile)
 
 
-class CarRacing(gym.Env, EzPickle):
+class CarRacingObstacles(gym.Env, EzPickle):
     metadata = {
         "render.modes": ["human", "rgb_array", "state_pixels"],
         "video.frames_per_second": FPS,
@@ -671,7 +671,7 @@ if __name__ == "__main__":
         if k == key.DOWN:
             a[2] = 0
 
-    env = CarRacing()
+    env = CarRacingObstacles()
     env.render()
     env.viewer.window.on_key_press = key_press
     env.viewer.window.on_key_release = key_release
