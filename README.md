@@ -9,9 +9,10 @@ This environment is a modified version of the [CarRacing environment](https://ww
 - Obstacles incur a fixed penalty (given by `OBSTACLE_PENALTY`)
 
 
-## Requirements:
+## Requirements
 - Gym 0.21.0
 
+## Usage
 To test the environment using human keyboard inputs, simply run:
 ```
 python car_racing_obstacles.py
@@ -20,7 +21,6 @@ python car_racing_obstacles.py
 To use the environment in OpenAI Gym RL scenarios, move `car_racing_obstacles.py` to your working directory,
 and do the following:
 
-## Usage:
 ```
 from car_racing_obstacles import CarRacingObstacles
 env = CarRacingObstacles()
