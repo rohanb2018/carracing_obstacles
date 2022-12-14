@@ -30,3 +30,8 @@ env = TimeLimit(CarRacingObstacles(),max_episode_steps=1000)
 
 Note that the time limit of 1000 timesteps is to ensure that behavior is identical to that of the
 built-in CarRacing-v0 environment.
+
+
+When we call `env.step(action)`, the returned info dictionary includes the following keys:
+- `num_obstacles`: total number of obstacles in the track
+- `num_collisions`: total number of collisions with obstacles (note that we can collide with the same obstacle more than once)
