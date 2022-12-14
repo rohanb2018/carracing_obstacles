@@ -103,9 +103,13 @@ class FrictionDetector(contactListener):
         if not tile:
             return
 
+        # If the tile's friction is above a certain value,
+        # this indicates that the car ran into an obstacle.
+        is_obstacle = tile.road_friction > 2.0
+
         # Turns visited road tiles into default road color,
         # but leaves obstacle tiles alone.
-        if tile.road_friction < 2.0:
+        if not is_obstacle:
             tile.color[0] = ROAD_COLOR[0]
             tile.color[1] = ROAD_COLOR[1]
             tile.color[2] = ROAD_COLOR[2]
@@ -113,19 +117,27 @@ class FrictionDetector(contactListener):
             return
         if begin:
             obj.tiles.add(tile)
+
+            # We should always incur a penalty for obstacles,
+            # even if we have visited them before,
+            # as long as we aren't currently in contact with them.
+            if is_obstacle and not tile.currently_in_contact:
+                self.env.reward -= tile.road_friction
+                self.env.num_collisions += 1
+
+            # For all tiles we record whether we have visited them before.
+            # But only incur reward for the first time we visit the road (non-obstacle) tiles.
             if not tile.road_visited:
                 tile.road_visited = True
-                # If the tile's friction is above a certain value,
-                # this indicates that the car ran into an obstacle,
-                # so we should incur the obstacle penalty.
-                if tile.road_friction > 2.0:
-                    self.env.reward -= tile.road_friction
-                    self.env.num_collisions += 1
-                else:
+                if not is_obstacle:
                     self.env.reward += 1000.0 / len(self.env.track)
-                self.env.tile_visited_count += 1
+                    self.env.tile_visited_count += 1
+
+            # Set currently_in_contact to true since we are currently in contact with the tile.
+            tile.currently_in_contact = True
         else:
             obj.tiles.remove(tile)
+            tile.currently_in_contact = False
 
 
 class CarRacingObstacles(gym.Env, EzPickle):
@@ -392,6 +404,7 @@ class CarRacingObstacles(gym.Env, EzPickle):
         t.road_visited = False
         t.road_friction = tile_friction
         t.fixtures[0].sensor = True
+        t.currently_in_contact = False
         self.road_poly.append(([vertices[0], vertices[1], vertices[2], vertices[3]], t.color))
         self.road.append(t)
 
