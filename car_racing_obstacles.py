@@ -445,7 +445,7 @@ class CarRacingObstacles(gym.Env, EzPickle):
                 done = True
                 step_reward = -100
 
-        return self.state, step_reward, done, {}
+        return self.state, step_reward, done, {"num_obstacles": self.num_obstacles}
 
     def render(self, mode="human"):
         assert mode in ["human", "state_pixels", "rgb_array"]
@@ -698,6 +698,7 @@ if __name__ == "__main__":
             if steps % 200 == 0 or done:
                 print("\naction " + str(["{:+0.2f}".format(x) for x in a]))
                 print("step {} total_reward {:+0.2f}".format(steps, total_reward))
+                print(f"Info dict {info}")
             steps += 1
             isopen = env.render()
             if done or restart or isopen == False:
