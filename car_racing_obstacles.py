@@ -120,6 +120,7 @@ class FrictionDetector(contactListener):
                 # so we should incur the obstacle penalty.
                 if tile.road_friction > 2.0:
                     self.env.reward -= tile.road_friction
+                    self.env.num_collisions += 1
                 else:
                     self.env.reward += 1000.0 / len(self.env.track)
                 self.env.tile_visited_count += 1
@@ -159,6 +160,7 @@ class CarRacingObstacles(gym.Env, EzPickle):
             low=0, high=255, shape=(STATE_H, STATE_W, 3), dtype=np.uint8
         )
         self.num_obstacles=0    # counts total number of obstacles presently in the track
+        self.num_collisions=0   # counts total number of collisions with obstacles
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
@@ -401,6 +403,7 @@ class CarRacingObstacles(gym.Env, EzPickle):
         self.t = 0.0
         self.road_poly = []
         self.num_obstacles = 0
+        self.num_collisions = 0
 
         while True:
             success = self._create_track()
@@ -445,7 +448,7 @@ class CarRacingObstacles(gym.Env, EzPickle):
                 done = True
                 step_reward = -100
 
-        return self.state, step_reward, done, {"num_obstacles": self.num_obstacles}
+        return self.state, step_reward, done, {"num_obstacles": self.num_obstacles, "num_collisions": self.num_collisions}
 
     def render(self, mode="human"):
         assert mode in ["human", "state_pixels", "rgb_array"]
