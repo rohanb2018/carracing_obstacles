@@ -158,6 +158,7 @@ class CarRacingObstacles(gym.Env, EzPickle):
         self.observation_space = spaces.Box(
             low=0, high=255, shape=(STATE_H, STATE_W, 3), dtype=np.uint8
         )
+        self.num_obstacles=0    # counts total number of obstacles presently in the track
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
@@ -344,6 +345,8 @@ class CarRacingObstacles(gym.Env, EzPickle):
                     vertices = left_vertices
                 # Add obstacle tile
                 self._add_road_tile(i, obst, OBSTACLE_COLOR, OBSTACLE_PENALTY)
+                # Increment number of obstacles by 1.
+                self.num_obstacles += 1
             # Add road tile
             self._add_road_tile(i, vertices, ROAD_COLOR, 1.0)
 
@@ -397,6 +400,7 @@ class CarRacingObstacles(gym.Env, EzPickle):
         self.tile_visited_count = 0
         self.t = 0.0
         self.road_poly = []
+        self.num_obstacles = 0
 
         while True:
             success = self._create_track()
@@ -408,6 +412,8 @@ class CarRacingObstacles(gym.Env, EzPickle):
                     "instances of this message)"
                 )
         self.car = Car(self.world, *self.track[0][1:4])
+
+        print(f"Total number of obstacles in the track: {self.num_obstacles}")
 
         return self.step(None)[0]
 
