@@ -17,11 +17,16 @@ def check_if_car_on_grass(car):
         true if car is on the grass, false otherwise
     """
 
+    cnt=0
+    
     for w in car.wheels:
         if len(w.tiles)==0:
+            cnt+=1
             # wheel is on the grass (not in contact with any tiles, either road or obstacle)
-            return True
-    return False
+    if cnt==4:
+        return True
+    else:
+        return False
 
 def evaluate_best_model(best_model, eval_env, num_episodes=500):
     """
