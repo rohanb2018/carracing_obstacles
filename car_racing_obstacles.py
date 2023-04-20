@@ -34,6 +34,8 @@ import sys
 import math
 import numpy as np
 
+np.random.seed(0)
+
 import Box2D
 from Box2D.b2 import fixtureDef
 from Box2D.b2 import polygonShape
@@ -343,7 +345,7 @@ class CarRacingObstacles(gym.Env, EzPickle):
             # With probability OBSTACLE_PROB, add an obstacle,
             # which is just a red-colored tile whose friction is equal to the
             # OBSTACLE_PENALTY parameter, and which covers one half of the road surface.
-            if(self.np_random.uniform() < OBSTACLE_PROB and (i - last_obst_idx) > OBSTACLE_SPACING and not border[i]):
+            if(np.random.uniform() < OBSTACLE_PROB and (i - last_obst_idx) > OBSTACLE_SPACING and not border[i]):
                 last_obst_idx = i
                 road1_mid = (x1,y1)
                 road2_mid = (x2,y2)
@@ -351,7 +353,7 @@ class CarRacingObstacles(gym.Env, EzPickle):
                 # And make the road tile only cover the other half of the road
                 left_vertices = [road1_l, road1_mid, road2_mid, road2_l]
                 right_vertices = [road1_mid, road1_r, road2_r, road2_mid]
-                if(self.np_random.uniform() < 0.5):
+                if(np.random.uniform() < 0.5):
                     obst = left_vertices
                     vertices = right_vertices
                 else:
