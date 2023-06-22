@@ -28,8 +28,8 @@ class CarRacingObstaclesPsiKP(CarRacingObstacles):
         # Call the superclass step() method first, and get return values
         obs, reward, done, info = super().step(action)
         # Return the environment parameter values as part of the observation
-        track_turn_rate = car_racing_obstacles.TRACK_TURN_RATE
-        obstacle_prob = car_racing_obstacles.OBSTACLE_PROB
+        track_turn_rate = self.TRACK_TURN_RATE
+        obstacle_prob = self.OBSTACLE_PROB
         obs_dict = {"image": obs, "psi": np.array([track_turn_rate, obstacle_prob])}
         # Return the modified observation
         return obs_dict, reward, done, info

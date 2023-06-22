@@ -67,15 +67,13 @@ ZOOM_FOLLOW = True  # Set to False for fixed view (don't use zoom)
 
 
 TRACK_DETAIL_STEP = 21 / SCALE
-TRACK_TURN_RATE = 0.31
 TRACK_WIDTH = 40 / SCALE
 BORDER = 8 / SCALE
 BORDER_MIN_COUNT = 4
 
 ROAD_COLOR = [0.4, 0.4, 0.4]
 
-#probability of an obstacle
-OBSTACLE_PROB = 0.05
+# Obstacle parameters
 OBSTACLE_PENALTY = 50.0
 OBSTACLE_SPACING = 20   # minimum distance between obstacles (in tiles)
 OBSTACLE_COLOR = [240/255, 102/255, 102/255] # light red
@@ -176,6 +174,10 @@ class CarRacingObstacles(gym.Env, EzPickle):
         self.num_obstacles=0    # counts total number of obstacles presently in the track
         self.num_collisions=0   # counts total number of collisions with obstacles
 
+        # Environment variables (previously globals)
+        self.TRACK_TURN_RATE = 0.31
+        self.OBSTACLE_PROB = 0.05            #probability of an obstacle
+
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
@@ -258,9 +260,9 @@ class CarRacingObstacles(gym.Env, EzPickle):
             prev_beta = beta
             proj *= SCALE
             if proj > 0.3:
-                beta -= min(TRACK_TURN_RATE, abs(0.001 * proj))
+                beta -= min(self.TRACK_TURN_RATE, abs(0.001 * proj))
             if proj < -0.3:
-                beta += min(TRACK_TURN_RATE, abs(0.001 * proj))
+                beta += min(self.TRACK_TURN_RATE, abs(0.001 * proj))
             x += p1x * TRACK_DETAIL_STEP
             y += p1y * TRACK_DETAIL_STEP
             track.append((alpha, prev_beta * 0.5 + beta * 0.5, x, y))
@@ -311,7 +313,7 @@ class CarRacingObstacles(gym.Env, EzPickle):
             for neg in range(BORDER_MIN_COUNT):
                 beta1 = track[i - neg - 0][1]
                 beta2 = track[i - neg - 1][1]
-                good &= abs(beta1 - beta2) > TRACK_TURN_RATE * 0.2
+                good &= abs(beta1 - beta2) > self.TRACK_TURN_RATE * 0.2
                 oneside += np.sign(beta1 - beta2)
             good &= abs(oneside) == BORDER_MIN_COUNT
             border[i] = good
@@ -345,7 +347,7 @@ class CarRacingObstacles(gym.Env, EzPickle):
             # With probability OBSTACLE_PROB, add an obstacle,
             # which is just a red-colored tile whose friction is equal to the
             # OBSTACLE_PENALTY parameter, and which covers one half of the road surface.
-            if(np.random.uniform() < OBSTACLE_PROB and (i - last_obst_idx) > OBSTACLE_SPACING and not border[i]):
+            if(np.random.uniform() < self.OBSTACLE_PROB and (i - last_obst_idx) > OBSTACLE_SPACING and not border[i]):
                 last_obst_idx = i
                 road1_mid = (x1,y1)
                 road2_mid = (x2,y2)
