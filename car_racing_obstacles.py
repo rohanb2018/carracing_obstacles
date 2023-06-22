@@ -179,6 +179,7 @@ class CarRacingObstacles(gym.Env, EzPickle):
         self.OBSTACLE_PROB = 0.05            #probability of an obstacle
 
     def seed(self, seed=None):
+        print(f"Random seed of CarRacing environment: {seed}")
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
