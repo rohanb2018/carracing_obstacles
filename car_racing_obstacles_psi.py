@@ -14,7 +14,7 @@ OBSTACLE_PROB_MAX = 0.13
 class CarRacingObstaclesPsiKP(CarRacingObstacles):
     """
     CarRacingObstaclesPsiKP is a modified version of CarRacingObstacles with modified (Dict) observation space,
-    and with the ability to optionally normalize the observation space values to be between [0,1]
+    and with the ability to optionally normalize the observation space values to be between [0,1].
 
     The main difference is that each observation from step() is a dictionary with the following keys:
     - 'psi': the environment state (currently, psi = [K,p] = [TRACK_TURN_RATE, OBSTACLE_PROB])
@@ -30,6 +30,7 @@ class CarRacingObstaclesPsiKP(CarRacingObstacles):
                                               "psi": spaces.Box(low=np.array([0,0]), high=np.array([1,1]), shape=(2,), dtype=np.float32)})
         # Set the normalization flag
         self.normalize_obs = normalize_obs
+        print(f"Normalizing CarRacingPsiKP observations: {self.normalize_obs}")
 
 
     def step(self, action):
@@ -38,7 +39,7 @@ class CarRacingObstaclesPsiKP(CarRacingObstacles):
         # Return the environment parameter values as part of the observation
         track_turn_rate = self.TRACK_TURN_RATE
         obstacle_prob = self.OBSTACLE_PROB
-        # Optionally normalize the observation
+        # Optionally normalize the observations
         if self.normalize_obs:
             obs = (obs - self.observation_space["image"].low) / (self.observation_space["image"].high - self.observation_space["image"].low)
             track_turn_rate = (track_turn_rate - TRACK_TURN_RATE_MIN)/(TRACK_TURN_RATE_MAX-TRACK_TURN_RATE_MIN)
