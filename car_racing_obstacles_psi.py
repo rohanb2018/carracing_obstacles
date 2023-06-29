@@ -6,22 +6,30 @@ from car_racing_obstacles import CarRacingObstacles
 from gym import spaces
 import numpy as np
 
+TRACK_TURN_RATE_MIN = 0.31
+TRACK_TURN_RATE_MAX = 0.71
+OBSTACLE_PROB_MIN = 0.05
+OBSTACLE_PROB_MAX = 0.13
+
 class CarRacingObstaclesPsiKP(CarRacingObstacles):
     """
-    CarRacingObstaclesPsiKP is a modified version of CarRacingObstacles with modified (Dict) observation space.
+    CarRacingObstaclesPsiKP is a modified version of CarRacingObstacles with modified (Dict) observation space,
+    and with the ability to optionally normalize the observation space values to be between [0,1]
 
     The main difference is that each observation from step() is a dictionary with the following keys:
     - 'psi': the environment state (currently, psi = [K,p] = [TRACK_TURN_RATE, OBSTACLE_PROB])
     - 'img': the current image from the environment
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, verbose=1, normalize_obs=False):
         # Call superclass constructor
-        super().__init__(*args, **kwargs)
+        super().__init__(verbose=verbose)
         # Create a modified Dict observation space
         # NOTE: Assumes that turn rate and obstacle probability lie in [0,1]
         img_observation_space = self.observation_space
         self.observation_space = spaces.Dict({"image": img_observation_space, \
                                               "psi": spaces.Box(low=np.array([0,0]), high=np.array([1,1]), shape=(2,), dtype=np.float32)})
+        # Set the normalization flag
+        self.normalize_obs = normalize_obs
 
 
     def step(self, action):
@@ -30,6 +38,11 @@ class CarRacingObstaclesPsiKP(CarRacingObstacles):
         # Return the environment parameter values as part of the observation
         track_turn_rate = self.TRACK_TURN_RATE
         obstacle_prob = self.OBSTACLE_PROB
+        # Optionally normalize the observation
+        if self.normalize_obs:
+            obs = (obs - self.observation_space["image"].low) / (self.observation_space["image"].high - self.observation_space["image"].low)
+            track_turn_rate = (track_turn_rate - TRACK_TURN_RATE_MIN)/(TRACK_TURN_RATE_MAX-TRACK_TURN_RATE_MIN)
+            obstacle_prob = (obstacle_prob - OBSTACLE_PROB_MIN)/(OBSTACLE_PROB_MAX-OBSTACLE_PROB_MIN)
         obs_dict = {"image": obs, "psi": np.array([track_turn_rate, obstacle_prob])}
         # Return the modified observation
         return obs_dict, reward, done, info
@@ -62,7 +75,7 @@ if __name__ == "__main__":
         if k == key.DOWN:
             a[2] = 0
 
-    env = CarRacingObstaclesPsiKP()
+    env = CarRacingObstaclesPsiKP(normalize_obs=False)
     env.render()
     env.viewer.window.on_key_press = key_press
     env.viewer.window.on_key_release = key_release
