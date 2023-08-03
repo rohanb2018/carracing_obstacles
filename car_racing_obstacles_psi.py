@@ -20,7 +20,7 @@ class CarRacingObstaclesPsiKP(CarRacingObstacles):
     - 'psi': the environment state (currently, psi = [K,p] = [TRACK_TURN_RATE, OBSTACLE_PROB])
     - 'img': the current image from the environment
     """
-    def __init__(self, verbose=1, normalize_obs=False):
+    def __init__(self, verbose=1, normalize_obs=False, turn_rate=0.31, obstacle_prob=0.05):
         # Call superclass constructor
         super().__init__(verbose=verbose)
         # Create a modified Dict observation space
@@ -31,6 +31,10 @@ class CarRacingObstaclesPsiKP(CarRacingObstacles):
         # Set the normalization flag
         self.normalize_obs = normalize_obs
         print(f"Normalizing CarRacingPsiKP observations: {self.normalize_obs}")
+        # Set the initial turn rate and obstacle probability
+        self.TRACK_TURN_RATE = turn_rate
+        self.OBSTACLE_PROB = obstacle_prob
+        print(f"Setting turn rate to: {self.TRACK_TURN_RATE}, obstacle prob to: {self.OBSTACLE_PROB}")
 
 
     def step(self, action):
