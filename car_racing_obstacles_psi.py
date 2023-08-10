@@ -19,8 +19,11 @@ class CarRacingObstaclesPsiKP(CarRacingObstacles):
     The main difference is that each observation from step() is a dictionary with the following keys:
     - 'psi': the environment state (currently, psi = [K,p] = [TRACK_TURN_RATE, OBSTACLE_PROB])
     - 'img': the current image from the environment
+
+    Another diference is that the environment parameters K and p are sampled from a set of possible values for each episode.
     """
-    def __init__(self, verbose=1, normalize_obs=False, turn_rate=0.31, obstacle_prob=0.05):
+    def __init__(self, verbose=1, normalize_obs=False, turn_rate=TRACK_TURN_RATE_MIN, obstacle_prob=OBSTACLE_PROB_MIN, \
+                 env_set=np.array([[TRACK_TURN_RATE_MIN, OBSTACLE_PROB_MIN]]), env_rng=np.random.default_rng()):
         # Call superclass constructor
         super().__init__(verbose=verbose)
         # Create a modified Dict observation space
@@ -35,7 +38,25 @@ class CarRacingObstaclesPsiKP(CarRacingObstacles):
         self.TRACK_TURN_RATE = turn_rate
         self.OBSTACLE_PROB = obstacle_prob
         print(f"Setting turn rate to: {self.TRACK_TURN_RATE}, obstacle prob to: {self.OBSTACLE_PROB}")
+        # Set the initial environment set (from which we sample environment parameters)
+        # Np array of shape (*,2)
+        self.env_set = env_set
+        # Set the environment random number generator
+        self.env_rng = env_rng
 
+    def reset(self):
+        """
+        Resamples a new environment from the environment set. Modifies
+        the given environment in-place.
+        """
+        # Sample a new environment parameter set from the environment set
+        [K,p] = self.env_set[self.env_rng.integers(0, self.env_set.shape[0]),:]
+        # Set the environment parameters
+        print(f"Resetting [K,p] in env.reset() to: {[K,p]}")
+        self.TRACK_TURN_RATE = K
+        self.OBSTACLE_PROB = p
+        # Call the superclass reset() method
+        return super().reset()
 
     def step(self, action):
         # Call the superclass step() method first, and get return values
