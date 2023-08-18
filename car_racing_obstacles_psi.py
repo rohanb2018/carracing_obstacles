@@ -44,6 +44,19 @@ class CarRacingObstaclesPsiKP(CarRacingObstacles):
         # Set the environment random number generator
         self.env_rng = env_rng
 
+
+    def change_env_set(self, env_set):
+        """
+        Sets the environment set to the given env_set.
+        """
+        self.env_set = env_set
+
+    def get_env_set(self):
+        """
+        Returns the current environment set.
+        """
+        return self.env_set
+
     def reset(self):
         """
         Resamples a new environment from the environment set. Modifies
