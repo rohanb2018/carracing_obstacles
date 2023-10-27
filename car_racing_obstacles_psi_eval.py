@@ -30,9 +30,10 @@ class CarRacingObstaclesPsiKPEval(CarRacingObstacles):
 
     Also takes in a flag called mode - one of "turn_rate","obs_prob","both" - indicating which parameter(s) to vary.
     """
-    def __init__(self, verbose=1, mode="both"):
-        # Call superclass constructor
+    def __init__(self, verbose=1, seed=0, mode="both"):
+        # Call superclass constructor + seeding
         super().__init__(verbose=verbose)
+        self.seed(seed)
         # Create a modified Dict observation space
         # Assumes that turn rate and obstacle probability lie in [0,1]
         img_observation_space = self.observation_space
