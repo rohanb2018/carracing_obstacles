@@ -29,7 +29,7 @@ env = TimeLimit(CarRacingObstacles(),max_episode_steps=1000)
 ...
 ```
 
-Note that the time limit of 1000 timesteps is to ensure that behavior is identical to that of the
+By default, `OBSTACLE_PROB` will be set to 0.05. Note that the time limit of 1000 timesteps is to ensure that behavior is identical to that of the
 built-in CarRacing-v0 environment.
 
 
