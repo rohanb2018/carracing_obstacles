@@ -51,8 +51,6 @@ import pyglet
 pyglet.options["debug_gl"] = False
 from pyglet import gl
 
-STATE_W = 96  # less than Atari 160x192
-STATE_H = 96
 VIDEO_W = 600
 VIDEO_H = 400
 WINDOW_W = 1000
@@ -146,7 +144,7 @@ class CarRacingObstacles(gym.Env, EzPickle):
         "video.frames_per_second": FPS,
     }
 
-    def __init__(self, verbose=1):
+    def __init__(self, STATE_W=96, STATE_H=96, verbose=1):
         EzPickle.__init__(self)
         self.seed()
         self.contactListener_keepref = FrictionDetector(self)
@@ -168,8 +166,12 @@ class CarRacingObstacles(gym.Env, EzPickle):
             np.array([+1, +1, +1]).astype(np.float32),
         )  # steer, gas, brake
 
+        # Turn STATE_H and STATE_W into instance variables
+        self.STATE_W = STATE_W  # less than Atari 160x192
+        self.STATE_H = STATE_H
+
         self.observation_space = spaces.Box(
-            low=0, high=255, shape=(STATE_H, STATE_W, 3), dtype=np.uint8
+            low=0, high=255, shape=(self.STATE_H, self.STATE_W, 3), dtype=np.uint8
         )
         self.num_obstacles=0    # counts total number of obstacles presently in the track
         self.num_collisions=0   # counts total number of collisions with obstacles
@@ -518,8 +520,8 @@ class CarRacingObstacles(gym.Env, EzPickle):
             VP_W = VIDEO_W
             VP_H = VIDEO_H
         elif mode == "state_pixels":
-            VP_W = STATE_W
-            VP_H = STATE_H
+            VP_W = self.STATE_W
+            VP_H = self.STATE_H
         else:
             pixel_scale = 1
             if hasattr(win.context, "_nscontext"):
