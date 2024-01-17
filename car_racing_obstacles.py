@@ -51,6 +51,8 @@ import pyglet
 pyglet.options["debug_gl"] = False
 from pyglet import gl
 
+import utils
+
 VIDEO_W = 600
 VIDEO_H = 400
 WINDOW_W = 1000
@@ -468,7 +470,19 @@ class CarRacingObstacles(gym.Env, EzPickle):
                 done = True
                 step_reward = -100
 
-        return self.state, step_reward, done, {"num_obstacles": self.num_obstacles, "num_collisions": self.num_collisions}
+        # Determine whether the car is currently on the grass, road, or obstacle,
+        # and populate the bg_category variable accordingly.
+        # Let (0,1,2) correspond to (grass, road, obstacle).
+        bg_category = 0
+        if utils.check_if_car_on_grass(self.car):
+            bg_category = 0
+        elif utils.check_if_car_on_obstacle(self.car):
+            bg_category = 2
+        else:
+            bg_category = 1
+
+        return self.state, step_reward, done, \
+            {"num_obstacles": self.num_obstacles, "num_collisions": self.num_collisions, "background": bg_category}
 
     def render(self, mode="human"):
         assert mode in ["human", "state_pixels", "rgb_array"]

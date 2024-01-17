@@ -28,6 +28,23 @@ def check_if_car_on_grass(car):
     else:
         return False
 
+def check_if_car_on_obstacle(car):
+    """
+    Checks to see if car is on an obstacle, which is the case if at least one of the car's wheels
+    is in contact with an obstacle tile.
+
+    Args:
+        car (car_racing.Car)
+
+    Return:
+        true if car is on an obstacle, false otherwise
+    """
+    for w in car.wheels:
+        for tile in w.tiles:
+            if tile.road_friction > 2.0:    # (indicates that a tile is obstacle: see FrictionDetector in car_racing_obstacles.py)
+                return True
+    return False
+
 def evaluate_best_model(best_model, eval_env, num_episodes=500):
     """
     Evaluates a policy on an evaluation CarRacing environment.
