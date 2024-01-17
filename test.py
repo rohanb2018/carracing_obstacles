@@ -1,4 +1,4 @@
-from utils import evaluate_best_model
+from utilities.utils import evaluate_best_model
 import gym
 
 class RandomPolicy:

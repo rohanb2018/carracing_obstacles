@@ -51,7 +51,7 @@ import pyglet
 pyglet.options["debug_gl"] = False
 from pyglet import gl
 
-import utils
+import utilities.utils as utils
 
 VIDEO_W = 600
 VIDEO_H = 400
