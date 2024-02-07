@@ -1,6 +1,8 @@
 ## Author: Rohan Banerjee (and Prishita Ray)
 ## Utilities file (contains useful methods for CarRacing)
 
+import numpy as np
+
 def check_if_car_on_grass(car):
     """
     Checks to see if car is on the grass, which is the case if at least one of the car's wheels
@@ -44,6 +46,41 @@ def check_if_car_on_obstacle(car):
             if tile.road_friction > 2.0:    # (indicates that a tile is obstacle: see FrictionDetector in car_racing_obstacles.py)
                 return True
     return False
+
+def get_nearest_obstacle_distance(car, obstacle_centroids):
+    """
+    Returns the distance to the nearest obstacle from the car's position.
+    Args:
+        car (car_racing.Car)
+        obstacle_centroids (list): list of (x, y) coordinates of the centroids of the obstacle tiles
+
+    Return:
+        distance to the nearest obstacle from the car's position
+    """
+    # Compute relative vector from car to obstacle centroids
+    car_x, car_y = car.hull.position
+    car_position = np.array([car_x, car_y])
+    obstacle_centroids_arr = np.array(obstacle_centroids)
+    relative_positions = obstacle_centroids_arr - car_position
+    # Compute distances to obstacles
+    distances = np.linalg.norm(relative_positions, axis=1)
+    return np.min(distances)
+
+    ## FUTURE CODE (to filter whether obstacle is in front of the car - doesn't seem to work properly at the moment)
+    # Get heading of the car
+    # car_heading = car.hull.angle
+    # car_heading_vector = np.array([np.cos(car_heading), np.sin(car_heading)])
+    # # Only keep obstacles that are in front of the car
+    # dot_products = np.dot(relative_positions, car_heading_vector)
+    # in_front_mask = dot_products > 0
+    # if np.all(~in_front_mask):
+    #     # No obstacles in front of the car
+    #     return np.inf
+    # else:
+    #     # Compute distances to obstacles that are in front of the car
+    #     distances = np.linalg.norm(relative_positions, axis=1)
+    #     distances = distances[in_front_mask]
+    #     return np.min(distances)
 
 def evaluate_best_model(best_model, eval_env, num_episodes=500):
     """

@@ -366,6 +366,8 @@ class CarRacingObstacles(gym.Env, EzPickle):
                 else:
                     obst = right_vertices
                     vertices = left_vertices
+                # Add obstacle centroid to list of centroids
+                self.obstacle_centroids.append(np.mean(np.array(obst), axis=0))
                 # Add obstacle tile
                 self._add_road_tile(i, obst, OBSTACLE_COLOR, OBSTACLE_PENALTY)
                 # Increment number of obstacles by 1.
@@ -424,6 +426,7 @@ class CarRacingObstacles(gym.Env, EzPickle):
         self.tile_visited_count = 0
         self.t = 0.0
         self.road_poly = []
+        self.obstacle_centroids = []
         self.num_obstacles = 0
         self.num_collisions = 0
 
@@ -482,7 +485,8 @@ class CarRacingObstacles(gym.Env, EzPickle):
             bg_category = 1
 
         return self.state, step_reward, done, \
-            {"num_obstacles": self.num_obstacles, "num_collisions": self.num_collisions, "background": bg_category}
+            {"num_obstacles": self.num_obstacles, "num_collisions": self.num_collisions, \
+             "background": bg_category, "nearest_obs_dist": utils.get_nearest_obstacle_distance(self.car, self.obstacle_centroids)}
 
     def render(self, mode="human"):
         assert mode in ["human", "state_pixels", "rgb_array"]
