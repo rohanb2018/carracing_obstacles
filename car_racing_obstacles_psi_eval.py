@@ -30,7 +30,7 @@ class CarRacingObstaclesPsiKPEval(CarRacingObstacles):
 
     Also takes in a flag called mode - one of "turn_rate","obs_prob","both" - indicating which parameter(s) to vary.
     """
-    def __init__(self, verbose=1, seed=0, mode="both"):
+    def __init__(self, seed=0, mode="both", verbose=1):
         # Call superclass constructor + seeding
         super().__init__(verbose=verbose)
         self.seed(seed)
@@ -53,6 +53,10 @@ class CarRacingObstaclesPsiKPEval(CarRacingObstacles):
             self.turnrates = TURNRATES
             self.probs = PROBS
             print("Eval environment: Varying both turn rate and obstacle prob.")
+        elif self.mode == "both_default" or self.mode == "obs_default":
+            self.turnrates = [TRACK_TURN_RATE_MIN]
+            self.probs = [OBSTACLE_PROB_MIN]
+            print("Eval environment: Keeping both turn rate and obstacle prob. fixed at (0.31,0.05)")
 
     def reset(self):
         """
