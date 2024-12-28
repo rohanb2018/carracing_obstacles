@@ -23,9 +23,9 @@ class CarRacingObstaclesPsiKP(CarRacingObstacles):
     Another diference is that the environment parameters K and p are sampled from a set of possible values for each episode.
     """
     def __init__(self, verbose=1, normalize_obs=False, turn_rate=TRACK_TURN_RATE_MIN, obstacle_prob=OBSTACLE_PROB_MIN, \
-                 env_set=np.array([[TRACK_TURN_RATE_MIN, OBSTACLE_PROB_MIN]]), env_rng=np.random.default_rng()):
+                 env_set=np.array([[TRACK_TURN_RATE_MIN, OBSTACLE_PROB_MIN]]), env_rng=np.random.default_rng(),STATE_W=64,STATE_H=64):
         # Call superclass constructor
-        super().__init__(verbose=verbose)
+        super().__init__(verbose=verbose,STATE_W=STATE_W,STATE_H=STATE_H)
         # Create a modified Dict observation space
         # NOTE: Assumes that turn rate and obstacle probability lie in [0,1]
         img_observation_space = self.observation_space
